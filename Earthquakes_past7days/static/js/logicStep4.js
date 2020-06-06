@@ -21,6 +21,14 @@ let baseMaps = {
     "Satellite": satelliteStreets
 };
 
+// Create the earthquake layer for our map.
+let earthquakes = new L.layerGroup();
+
+// Define the object that contains the overlays (this will be visible at all time)
+let overlays = {
+  Earthquakes: earthquakes
+};
+
 // Create the map with center, zoom leve, and defualt layer
 let map = L.map("mapid", {
     center: [39.5, -98.5],
@@ -28,8 +36,8 @@ let map = L.map("mapid", {
     layers: [streets]
   });
 
-// Pass our map layers into our layers contol and add the layers
-L.control.layers(baseMaps).addTo(map);
+// Pass our map layers and overlays into our layers contol and add the layers
+L.control.layers(baseMaps, overlays).addTo(map);
 
 // This function returns the style data for each of the earthquakes we plot on
 // the map. We pass the magnitude of the earthquake into a function
@@ -90,7 +98,10 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geoj
       onEachFeature: function(feature, layer) {
         layer.bindPopup("<h3>Magnitude: " + feature.properties.mag + "</h3> <hr> <h3>Location: " + feature.properties.title + "</h3>"); 
         }
-    }).addTo(map);
+    }).addTo(earthquakes);
+
+    //Add the earthquake layer to our map.
+    earthquakes.addTo(map);
 });
 
 
